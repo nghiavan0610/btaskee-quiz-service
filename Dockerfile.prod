@@ -1,0 +1,31 @@
+# Build stage
+FROM golang:1.23-alpine AS builder
+
+WORKDIR /app
+
+COPY go.* ./
+
+RUN go mod download && go mod verify
+
+COPY . .
+
+RUN CGO_ENABLED=0 GOOS=linux go build -o /btaskee-quiz-service ./cmd/app
+RUN CGO_ENABLED=0 GOOS=linux go build -o /migrate ./cmd/migrate
+
+FROM alpine:edge AS production
+
+WORKDIR /app
+
+COPY --from=builder /app /app
+COPY --from=builder /btaskee-quiz-service /btaskee-quiz-service
+COPY --from=builder /migrate /migrate
+
+# Set the timezone and install CA certificates
+RUN apk add --no-cache ca-certificates tzdata
+ENV TZ=Asia/Ho_Chi_Minh
+
+COPY entry.sh /app/entry.sh
+RUN chmod +x /app/entry.sh
+
+# Set the entrypoint to run the entry script
+ENTRYPOINT ["/app/entry.sh"]

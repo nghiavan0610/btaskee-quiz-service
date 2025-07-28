@@ -78,8 +78,7 @@ func (s *sessionService) CreateSession(ctx context.Context, authUser *dtos.UserS
 		hostID = &authUser.UserID
 		hostName = authUser.Username
 	} else {
-		// Generate unique negative anonymous ID for guest hosts (negative to avoid conflict with real user IDs)
-		anonymousID := -time.Now().UnixNano()
+		anonymousID := int64(1000000000) + time.Now().Unix()
 		hostID = &anonymousID
 	}
 
@@ -173,8 +172,9 @@ func (s *sessionService) JoinSession(ctx context.Context, authUser *dtos.UserSes
 	if authUser != nil {
 		userID = &authUser.UserID
 	} else {
-		// Generate unique negative anonymous ID for guest participants (negative to avoid conflict with real user IDs)
-		anonymousID := -time.Now().UnixNano()
+		// Generate unique anonymous ID using high positive range (1 billion + timestamp in seconds)
+		// This avoids JavaScript precision issues and conflicts with real user IDs
+		anonymousID := int64(1000000000) + time.Now().Unix()
 		userID = &anonymousID
 	}
 

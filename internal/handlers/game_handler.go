@@ -45,11 +45,13 @@ func (h *gameHandler) RegisterRoutes(r fiber.Router) {
 	gameGroup := r.Group("/games")
 
 	gameGroup.Post("/",
+		h.authGuard.OptionalAccessTokenGuard(),
 		middlewares.BodyValidator[dtos.CreateSessionRequest](),
 		h.createSession,
 	)
 
 	gameGroup.Get("/join/:join_code",
+		h.authGuard.OptionalAccessTokenGuard(),
 		middlewares.PathParamsValidator[dtos.JoinSessionRequest](),
 		h.joinSession,
 	)

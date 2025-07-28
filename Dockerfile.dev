@@ -1,0 +1,19 @@
+FROM golang:1.23.1-alpine3.19
+
+# Set the working directory
+WORKDIR /app
+
+RUN go install github.com/air-verse/air@latest
+
+COPY go.* ./
+
+# Install dependencies
+RUN go mod download
+
+COPY . .
+
+# Set the timezone and install CA certificates
+RUN apk --no-cache add ca-certificates tzdata
+ENV TZ=Asia/Ho_Chi_Minh
+
+CMD ["air", "-c", ".air.toml"]

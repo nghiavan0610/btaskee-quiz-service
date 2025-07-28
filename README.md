@@ -61,6 +61,9 @@ A comprehensive real-time quiz platform built with Go, featuring WebSocket-based
 
 ### REST API Endpoints
 
+**Connection:** `http://localhost:8080/api/v1`  
+**Production:** `https://btaskee-api.benlab.site/api/v1`
+
 #### Authentication
 
 - `POST /api/v1/auth/signup` - User registration
@@ -92,7 +95,8 @@ A comprehensive real-time quiz platform built with Go, featuring WebSocket-based
 
 ### WebSocket API
 
-**Connection:** `ws://localhost:8080/api/v1/sessions/:session_id/ws`
+**Connection:** `ws://localhost:8080/api/v1/ws/sessions/:session_id`  
+**Production:** `wss://btaskee-api.benlab.site/api/v1/ws/sessions/:session_id`
 
 #### Client → Server Messages
 
@@ -594,10 +598,10 @@ users (1) ──→ (many) session_participants
    npm install -g wscat
 
    # Connect to session (replace session_id)
-   wscat -c ws://localhost:8080/api/v1/sessions/1/ws
+   wscat -c wss://btaskee-api.benlab.site/api/v1/ws/sessions/1
 
    # Send join message
-   {"type":"join","payload":{"session_id":"1","nickname":"Player1","user_id":123}}
+   {"type":"join","payload":{"user_id":123}}
    ```
 
 3. **Load Testing:**
